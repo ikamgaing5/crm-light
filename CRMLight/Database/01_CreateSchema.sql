@@ -1,0 +1,75 @@
+CREATE DATABASE CRMLightDb;
+GO
+USE CRMLightDb;
+GO
+
+CREATE TABLE Users (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    FullName NVARCHAR(120) NOT NULL,
+    Username NVARCHAR(60) NOT NULL UNIQUE,
+    PasswordHash NVARCHAR(255) NOT NULL,
+    Role NVARCHAR(30) NOT NULL DEFAULT 'User',
+    IsActive BIT NOT NULL DEFAULT 1,
+    CreatedAt DATETIME NOT NULL DEFAULT GETDATE()
+);
+
+CREATE TABLE Clients (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    CodeClient NVARCHAR(50) NOT NULL UNIQUE,
+    Nom NVARCHAR(120) NOT NULL,
+    Entreprise NVARCHAR(120) NULL,
+    Email NVARCHAR(120) NULL,
+    Telephone NVARCHAR(40) NULL,
+    Adresse NVARCHAR(255) NULL,
+    Source NVARCHAR(80) NULL,
+    Statut NVARCHAR(30) NOT NULL DEFAULT 'Prospect',
+    CreatedAt DATETIME NOT NULL DEFAULT GETDATE()
+);
+
+CREATE TABLE Interactions (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    ClientId INT NOT NULL,
+    UserId INT NOT NULL,
+    TypeInteraction NVARCHAR(30) NOT NULL DEFAULT 'Appel',
+    Sujet NVARCHAR(200) NOT NULL,
+    Notes NVARCHAR(MAX) NULL,
+    DateInteraction DATETIME NOT NULL DEFAULT GETDATE(),
+    NextFollowUpDate DATETIME NULL,
+    CONSTRAINT FK_Interactions_Clients FOREIGN KEY (ClientId) REFERENCES Clients(Id),
+    CONSTRAINT FK_Interactions_Users FOREIGN KEY (UserId) REFERENCES Users(Id)
+);
+
+CREATE TABLE Opportunites (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    ClientId INT NOT NULL,
+    Titre NVARCHAR(200) NOT NULL,
+    Montant DECIMAL(18,2) NOT NULL DEFAULT 0,
+    Etape NVARCHAR(40) NOT NULL DEFAULT 'Prospection',
+    Probabilite INT NOT NULL DEFAULT 10,
+    DateCreation DATETIME NOT NULL DEFAULT GETDATE(),
+    DateCloturePrevue DATETIME NULL,
+    CONSTRAINT FK_Opportunites_Clients FOREIGN KEY (ClientId) REFERENCES Clients(Id)
+);
+
+CREATE TABLE Relances (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    ClientId INT NOT NULL,
+    InteractionId INT NULL,
+    Canal NVARCHAR(30) NOT NULL DEFAULT 'Email',
+    Message NVARCHAR(500) NOT NULL,
+    ReminderDate DATETIME NOT NULL,
+    Statut NVARCHAR(30) NOT NULL DEFAULT 'Planifiée',
+    IsNotified BIT NOT NULL DEFAULT 0,
+    CONSTRAINT FK_Relances_Clients FOREIGN KEY (ClientId) REFERENCES Clients(Id),
+    CONSTRAINT FK_Relances_Interactions FOREIGN KEY (InteractionId) REFERENCES Interactions(Id)
+);
+
+CREATE TABLE Notifications (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    UserId INT NULL,
+    Titre NVARCHAR(200) NOT NULL,
+    Message NVARCHAR(500) NOT NULL,
+    IsRead BIT NOT NULL DEFAULT 0,
+    CreatedAt DATETIME NOT NULL DEFAULT GETDATE()
+);
+GO
