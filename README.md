@@ -64,12 +64,12 @@ un utilisateur admin, éventuellement des données de démonstration
 
 Lancement de l’application
 
-Dans Visual Studio :
-  Appuie sur F5 ou clique sur Start
+  Dans Visual Studio :
+    Appuie sur F5 ou clique sur Start
+    
+  L’écran de connexion s’affiche, entrez les identifiants par défaut
   
-L’écran de connexion s’affiche, entrez les identifiants par défaut
-
-Identifiant de connexion :
-  Nom d’utilisateur : admin ,mot de passe : Admin123!
+  Identifiant de connexion :
+    Nom d’utilisateur : admin ,mot de passe : Admin123!
 
 Profitez de l'application !
